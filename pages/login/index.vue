@@ -1,14 +1,13 @@
 <template>
   Login please!
 
-  <Button @click="login" label="Login with Google" />
+  <UButton @click="login()" label="Login with Google" />
 
   <pre>{{ session.data }}</pre>
-  <Button v-if="session.data" @click="signOut()">Sign out</Button>
+  <UButton v-if="session.data" @click="signOut()">Sign out</UButton>
 </template>
 
 <script setup lang="ts">
-import Button from 'primevue/button'
 import { signIn, signOut, useSession } from '~/lib/auth-client'
 const session = useSession()
 

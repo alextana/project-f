@@ -1,4 +1,5 @@
 <template>
+  <AppHeader />
   <div class="flex">
     <AppSidebar />
     <AppContent>

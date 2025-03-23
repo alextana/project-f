@@ -1,9 +1,4 @@
 @import 'tailwindcss';
-@import 'tailwindcss-primeui';
-@import 'primeicons/primeicons.css';
-@plugin "@tailwindcss/typography";
+@import '@nuxt/ui';
 
-:root {
-  background: var(--color-neutral-900);
-  color: var(--color-neutral-300);
-}
+@plugin "@tailwindcss/typography";
