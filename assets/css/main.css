@@ -1,0 +1,8 @@
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+@import 'primeicons/primeicons.css';
+
+:root {
+  background: var(--color-neutral-900);
+  color: var(--color-neutral-300);
+}
