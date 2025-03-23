@@ -1,6 +1,7 @@
 @import 'tailwindcss';
-@plugin "@tailwindcss/typography";
+@import 'tailwindcss-primeui';
 @import 'primeicons/primeicons.css';
+@plugin "@tailwindcss/typography";
 
 :root {
   background: var(--color-neutral-900);
