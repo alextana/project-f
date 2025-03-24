@@ -54,7 +54,7 @@ export const verification = sqliteTable('verification', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }),
 })
 
-export const notesTable = sqliteTable('notes_table', {
+export const note = sqliteTable('note', {
   id: text().primaryKey().unique(),
   title: text().notNull(),
   content: text().notNull(),
@@ -63,11 +63,11 @@ export const notesTable = sqliteTable('notes_table', {
     .references(() => user.id),
 })
 
-export const noteLinksTable = sqliteTable('note_links', {
+export const noteLink = sqliteTable('note_link', {
   noteId: text()
     .notNull()
-    .references(() => notesTable.id),
+    .references(() => note.id),
   linkedNoteId: text()
     .notNull()
-    .references(() => notesTable.id),
+    .references(() => note.id),
 })

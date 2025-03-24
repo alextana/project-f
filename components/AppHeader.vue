@@ -9,6 +9,7 @@
           v-if="session.data?.user?.image"
           :alt="session.data?.user?.name"
           :src="session.data?.user?.image || undefined"
+          class="outline-2 outline-transparent hover:outline-primary-500 cursor-pointer"
         />
         <UIcon
           name="i-lucide-log-out"
