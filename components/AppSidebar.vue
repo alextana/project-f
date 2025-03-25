@@ -1,5 +1,5 @@
 <template>
-  <aside class="w-48 h-screen px-2 py-3">
+  <aside class="w-52 h-[calc(100vh_-_57px)] px-2 py-3 bg-neutral-950/50">
     <UNavigationMenu
       orientation="vertical"
       :items="items"
@@ -23,7 +23,7 @@ const items = ref([
           label: 'New note',
           description: 'Add a new note',
           onSelect: () => {
-            console.log('New note selected')
+            navigateTo('/notes/new-note')
           },
           icon: 'i-lucide-plus',
         },
@@ -31,6 +31,7 @@ const items = ref([
           label: 'My notes',
           description: 'See your existing notes',
           icon: 'i-lucide-notebook',
+          to: '/notes',
         },
       ],
     },

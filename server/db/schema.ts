@@ -58,7 +58,7 @@ export const note = sqliteTable('note', {
   id: text().primaryKey().unique(),
   title: text().notNull(),
   content: text().notNull(),
-  userId: integer()
+  userId: text()
     .notNull()
     .references(() => user.id),
 })

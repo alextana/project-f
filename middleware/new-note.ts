@@ -1,6 +1,6 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
   try {
-    const { data: noteId } = await useFetch('/api/createNote', {
+    const { data: noteId } = await useFetch('/api/notes/createNote', {
       method: 'POST',
     })
 

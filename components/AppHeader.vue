@@ -3,7 +3,7 @@
     class="w-screen py-3 px-4 border-b bg-slate-800/20 border-gray-700/40 shadow-md"
   >
     <div class="flex justify-between items-center">
-      <div>Logo</div>
+      <NuxtLink to="/">Logo</NuxtLink>
       <div class="user-info flex items-center gap-2">
         <UAvatar
           v-if="session.data?.user?.image"

@@ -1,7 +1,5 @@
 <template>
-  <ClientOnly>
-    <AppDashboard />
-  </ClientOnly>
+  <AppDashboard />
 </template>
 
 <script setup></script>
