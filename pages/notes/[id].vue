@@ -1,6 +1,6 @@
 <template>
   <div v-if="status === 'pending'">Loading...</div>
-  <div v-if="status !== 'pending' && !data">
+  <div v-if="status !== 'pending' && !data && session.data">
     The requested note could not be found.
   </div>
   <div

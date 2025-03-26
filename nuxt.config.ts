@@ -2,6 +2,7 @@
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
+  ssr: false,
   modules: ['@nuxt/ui', 'nuxt-tiptap-editor', '@vueuse/nuxt'],
   tiptap: {
     prefix: 'Tiptap',
