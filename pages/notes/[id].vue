@@ -1,5 +1,14 @@
 <template>
-  <div v-if="status === 'pending'">Loading...</div>
+  <div v-if="!notesObservable">Note could not be found.</div>
+
+  <NoteEditor
+    v-if="notesObservable"
+    :content="notesObservable.content"
+    :title="notesObservable.title || ''"
+    :note-id="route.params.id as string || ''"
+  />
+
+  <!-- <div v-if="status === 'pending'">Loading...</div>
   <div v-if="status !== 'pending' && !data && session.data">
     The requested note could not be found.
   </div>
@@ -17,16 +26,19 @@
       :title="data?.note.title"
       :note-id="route.params.id as string || ''"
     />
-  </div>
+  </div> -->
 </template>
 
 <script setup lang="ts">
-import type { Note } from '~/types/Notes'
-import { useSession } from '~/lib/auth-client'
-const route = useRoute()
-const session = useSession()
+// import { useSession } from '~/lib/auth-client'
+import { db, type Note } from '~/lib/dexie'
+import { useObservable } from '@vueuse/rxjs'
+import { liveQuery } from 'dexie'
 
-const { status, data } = await useFetch<Note>(
-  '/api/notes/note/' + route.params.id
-)
+const route = useRoute()
+// const session = useSession()
+
+const notesObservable = useObservable(
+  liveQuery(() => db.notes.get(route.params.id as string)) as any
+) as Ref<Note | undefined>
 </script>

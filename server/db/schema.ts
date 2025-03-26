@@ -56,8 +56,8 @@ export const verification = sqliteTable('verification', {
 
 export const note = sqliteTable('note', {
   id: text().primaryKey().unique(),
-  title: text().notNull(),
-  content: text().notNull(),
+  title: text(),
+  content: text(),
   userId: text()
     .notNull()
     .references(() => user.id),

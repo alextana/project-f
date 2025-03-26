@@ -68,17 +68,21 @@
     </floating-menu>
   </div>
 
-  <TiptapEditorContent :editor="editor" @input="saveContent" />
+  <TiptapEditorContent
+    :editor="editor"
+    @input="saveContent"
+    @keydown.backspace="saveContent"
+  />
 </template>
 
 <script setup lang="ts">
 import { BubbleMenu, FloatingMenu } from '@tiptap/vue-3'
-import { useDebounceFn } from '@vueuse/core'
+import { db } from '~/lib/dexie'
 
 const props = defineProps({
   content: {
-    type: String,
-    default: '',
+    type: Object,
+    default: {},
   },
   title: {
     type: String,
@@ -107,37 +111,35 @@ onBeforeUnmount(() => {
   unref(editor)?.destroy()
 })
 
-const saveNote = useDebounceFn((field: 'title' | 'content', value: any) => {
-  try {
-    isSyncing.value = true
+const saveNote = async (field: 'title' | 'content', value: any) => {
+  if (field === 'content') {
+    await nextTick()
 
-    $fetch('/api/notes/updateNote', {
-      method: 'PATCH',
-      body: JSON.stringify({
-        [field]: value,
-        id: props.noteId,
-      }),
+    value = unref(editor)?.getJSON()
+  }
+
+  try {
+    await db.notes.update(props.noteId, {
+      [field]: value,
     })
   } catch (error) {
     console.error(`Error saving ${field}`, error)
-  } finally {
-    isSyncing.value = false
   }
-}, 800)
+}
 
 const saveTitle = () => saveNote('title', title.value)
-const saveContent = () => saveNote('content', unref(editor)?.getJSON() ?? null)
+const saveContent = () => saveNote('content', null)
 
 onMounted(() => {
   if (!!unref(editor)) {
     let content = null
     try {
-      content = JSON.parse(props.content)
+      content = props.content
     } catch (error) {
       return
     }
 
-    unref(editor)?.commands.setContent(JSON.parse(props.content))
+    unref(editor)?.commands.setContent(props.content)
   }
 })
 </script>

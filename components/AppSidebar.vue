@@ -8,6 +8,8 @@
   </aside>
 </template>
 <script setup>
+const { createNote } = useCreateNote()
+
 const items = ref([
   [
     {
@@ -23,7 +25,7 @@ const items = ref([
           label: 'New note',
           description: 'Add a new note',
           onSelect: () => {
-            navigateTo('/notes/new-note')
+            createNote()
           },
           icon: 'i-lucide-plus',
         },

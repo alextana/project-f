@@ -2,13 +2,13 @@ import Dexie, { type EntityTable } from 'dexie'
 
 interface Note {
   id: string
-  title: string
-  content: number
+  title: string | null
+  content: string | null
   userId: string
 }
 
 const db = new Dexie('Notes') as Dexie & {
-  friends: EntityTable<
+  notes: EntityTable<
     Note,
     'id' // primary key "id" (for the typings only)
   >
