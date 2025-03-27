@@ -11,7 +11,6 @@
 
 <script setup lang="ts">
 import { db, type Note } from '~/lib/dexie'
-import { useObservable } from '@vueuse/rxjs'
 import { liveQuery } from 'dexie'
 
 const route = useRoute()

@@ -1,24 +1,28 @@
 <template>
-  <div v-if="status === 'pending'">Loading...</div>
-  <div v-if="status !== 'pending' && !data?.length">No notes found.</div>
-  <div
-    class="text-lg text-center py-12"
-    v-if="!session.data && status !== 'pending' && !session.isPending"
-  >
-    Access denied. Please
-    <NuxtLink class="text-primary-500" to="/login">login</NuxtLink> to view this
-    page.
-  </div>
+  <div v-if="!notesObservable?.length">Notes could not be found.</div>
 
-  <div v-if="session.data && status !== 'pending' && data?.length">
-    notes index data is: {{ data }}
+  <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
+    <UCard
+      v-for="note in notesObservable"
+      :key="note.id"
+      class="hover:outline-1 hover:outline-gray-600 bg-neutral-950/20"
+    >
+      <UIcon
+        name="lucide-sticky-note"
+        class="text-gray-400 text-2xl block mb-2"
+      />
+      <span class="font-semibold">
+        {{ note.title || 'Untitled note' }}
+      </span>
+    </UCard>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useSession } from '~/lib/auth-client'
-import type { Note } from '~/types/Notes'
-const { status, data } = await useFetch<Note[]>('/api/notes/getNotes')
+import { db, type Note } from '~/lib/dexie'
+import { liveQuery } from 'dexie'
 
-const session = useSession()
+const notesObservable = useObservable(
+  liveQuery(() => db.notes.where('userId').equals('local').toArray()) as any
+) as Ref<Note[] | undefined>
 </script>

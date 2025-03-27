@@ -2,9 +2,9 @@ import { db } from '~/lib/dexie'
 import { nanoid } from 'nanoid'
 
 export const useCreateNote = () => {
-  const id = nanoid()
-
   const createNote = async () => {
+    const id = nanoid()
+
     let note = null
     try {
       note = await db.notes.add({
