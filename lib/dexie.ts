@@ -5,6 +5,9 @@ interface Note {
   title: string | null
   content: string | null
   userId: string
+  updatedAt: string
+  deletedAt: string | null
+  createdAt: string
 }
 
 const db = new Dexie('Notes') as Dexie & {
@@ -15,8 +18,8 @@ const db = new Dexie('Notes') as Dexie & {
 }
 
 // Schema declaration:
-db.version(1).stores({
-  notes: '&id, title, content, userId',
+db.version(2).stores({
+  notes: '&id, title, content, userId, updatedAt, deletedAt, createdAt',
 })
 
 export type { Note }

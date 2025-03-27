@@ -58,6 +58,9 @@ export const note = sqliteTable('note', {
   id: text().primaryKey().unique(),
   title: text(),
   content: text(),
+  createdAt: integer('created_at', { mode: 'timestamp' }),
+  deletedAt: integer('deleted_at', { mode: 'timestamp' }),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }),
   userId: text()
     .notNull()
     .references(() => user.id),

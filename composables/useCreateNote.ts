@@ -2,16 +2,20 @@ import { db } from '~/lib/dexie'
 import { nanoid } from 'nanoid'
 
 export const useCreateNote = () => {
-  const createNote = async () => {
+  const createNote = () => {
     const id = nanoid()
 
     let note = null
+
     try {
-      note = await db.notes.add({
+      note = db.notes.add({
         id,
         title: null,
         content: null,
         userId: 'local',
+        deletedAt: null,
+        updatedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
       })
 
       navigateTo(`/notes/${id}`)
