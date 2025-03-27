@@ -1,24 +1,36 @@
 <template>
   <div v-if="!notesObservable?.length">Notes could not be found.</div>
 
-  <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
-    <UCard
+  <div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
+    <NuxtLink
+      :to="`/notes/${note.id}`"
       v-for="note in notesObservable"
       :key="note.id"
-      class="hover:outline-1 hover:outline-gray-600 bg-neutral-950/20"
     >
-      <UIcon
-        name="lucide-sticky-note"
-        class="text-gray-400 text-2xl block mb-2"
-      />
-      <span class="font-semibold">
-        {{ note.title || 'Untitled note' }}
-      </span>
-    </UCard>
+      <UCard
+        class="hover:outline-1 self-stretch h-full hover:outline-gray-600 bg-neutral-950/20 hover:bg-neutral-950/30"
+      >
+        <UIcon
+          name="lucide-sticky-note"
+          class="text-gray-400 text-2xl block mb-2"
+        />
+        <span class="font-semibold">
+          {{ note.title || 'Untitled note' }}
+        </span>
+
+        <div class="edited">
+          <span v-if="note.updatedAt" class="text-[10px] text-gray-400">
+            Last edited:
+            {{ format(note.updatedAt, { date: 'medium', time: 'short' }) }}
+          </span>
+        </div>
+      </UCard>
+    </NuxtLink>
   </div>
 </template>
 
 <script setup lang="ts">
+import { format } from '@formkit/tempo'
 import { db, type Note } from '~/lib/dexie'
 import { liveQuery } from 'dexie'
 
