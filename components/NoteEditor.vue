@@ -72,6 +72,7 @@
     :editor="editor"
     @input="saveContent"
     @keydown.backspace="saveContent"
+    @paste="saveContent"
   />
 </template>
 
@@ -121,6 +122,7 @@ const saveNote = async (field: 'title' | 'content', value: any) => {
   try {
     await db.notes.update(props.noteId, {
       [field]: value,
+      updatedAt: new Date().toISOString(),
     })
   } catch (error) {
     console.error(`Error saving ${field}`, error)
