@@ -8,19 +8,24 @@ interface Note {
   updatedAt: string
   deletedAt: string | null
   createdAt: string
+  isPublic: boolean
+}
+
+interface NoteAccess {
+  noteId: string
+  userId: string
+  createdAt: string
 }
 
 const db = new Dexie('Notes') as Dexie & {
-  notes: EntityTable<
-    Note,
-    'id' // primary key "id" (for the typings only)
-  >
+  notes: EntityTable<Note, 'id'>
+  noteAccess: EntityTable<NoteAccess>
 }
 
-// Schema declaration:
 db.version(2).stores({
   notes: '&id, title, content, userId, updatedAt, deletedAt, createdAt',
+  noteAccess: '[noteId+userId], noteId, userId, createdAt',
 })
 
-export type { Note }
+export type { Note, NoteAccess }
 export { db }

@@ -1,4 +1,5 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core'
+import { sql } from 'drizzle-orm'
 
 export const user = sqliteTable('user', {
   id: text('id').primaryKey(),
@@ -64,7 +65,26 @@ export const note = sqliteTable('note', {
   userId: text()
     .notNull()
     .references(() => user.id),
+  isPublic: integer('is_public', { mode: 'boolean' }).default(false),
 })
+
+export const noteAccess = sqliteTable(
+  'note_access',
+  {
+    noteId: text('note_id')
+      .notNull()
+      .references(() => note.id),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id),
+    createdAt: integer('created_at', { mode: 'timestamp' })
+      .notNull()
+      .default(sql`(current_timestamp)`),
+  },
+  (table) => {
+    return [primaryKey({ columns: [table.noteId, table.userId] })]
+  }
+)
 
 export const noteLink = sqliteTable('note_link', {
   noteId: text()

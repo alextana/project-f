@@ -16,6 +16,7 @@ export const useCreateNote = () => {
         deletedAt: null,
         updatedAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),
+        isPublic: false,
       })
 
       navigateTo(`/notes/${id}`)
