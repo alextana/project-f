@@ -38,6 +38,8 @@
 
 ### notes
 
+- [] implement a page with all the notes
+- [] add search functionality
 - [] make them blocks, think of a potential format
 - [] notes should be able to be converted to markdown / json and served as APIs - so if you want to make a website you can use them as an api
 
