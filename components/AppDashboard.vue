@@ -9,9 +9,15 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useSession } from '~/lib/auth-client'
 const session = useSession()
+
+const { postToWorker } = useSyncWorker()
+
+onMounted(() => {
+  postToWorker()
+})
 
 const getGreeting = () => {
   const now = new Date()
