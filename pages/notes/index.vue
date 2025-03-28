@@ -11,8 +11,16 @@
     <div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
       <NuxtLink :to="`/notes/${note.id}`" v-for="note in notes" :key="note.id">
         <UCard
-          class="hover:outline-1 self-stretch h-full hover:outline-gray-600 bg-neutral-950/20 hover:bg-neutral-950/30"
+          class="hover:outline-1 relative self-stretch h-full hover:outline-gray-600 bg-neutral-950/20 hover:bg-neutral-950/30"
         >
+          <div
+            v-if="note.isPublic === false"
+            class="note shared absolute right-2 top-2"
+          >
+            <UTooltip text="Private note" :delay-duration="0">
+              <UIcon name="lucide-earth-lock" class="text-gray-500 text-md" />
+            </UTooltip>
+          </div>
           <UIcon
             name="lucide-sticky-note"
             class="text-gray-400 text-2xl block mb-2"
