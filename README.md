@@ -10,7 +10,6 @@ SnappyNote is designed for speed and privacy. Create, organize, and access your 
 - Offline support: Access and modify notes even without an internet connection.
 - Optimized sync: Seamlessly synchronize your notes with the database when online, ensuring data consistency with minimal latency.
 - Supports logged-out and logged-in use, providing flexibility and accessibility.
-- [Add more features specific to your app here]
 
 ## Local-First Architecture
 
@@ -19,4 +18,3 @@ SnappyNote leverages a local-first architecture for unparalleled speed and relia
 - Offline Availability: The application is fully functional offline.
 - Optimistic Updates: Changes are applied instantly locally and then synced in the background.
 - Efficient Sync: Intelligent synchronization algorithms minimize data transfer and ensure conflict resolution.
-- [Explain any specific local-first technologies or strategies you use, e.g., IndexedDB, local storage APIs, CRDTs for future sync]
