@@ -1,9 +1,17 @@
 <template>
-  <div v-if="!groupedNotes || Object.keys(groupedNotes).length === 0">
+  <div
+    v-if="(loaded && !groupedNotes) || Object.keys(groupedNotes).length === 0"
+  >
     Notes could not be found.
   </div>
 
-  <div v-for="(notes, dateHeader) in groupedNotes" :key="dateHeader">
+  <UButton @click="postToWorker"> sync now </UButton>
+
+  <div
+    class="my-4"
+    v-for="(notes, dateHeader) in groupedNotes"
+    :key="dateHeader"
+  >
     <div class="mb-2 flex gap-1 font-extrabold items-center text-gray-400">
       <UIcon name="lucide-calendar" class="text-sm block mb-2" />
       <span class="mb-2 text-sm">{{ dateHeader }}</span>
@@ -46,11 +54,20 @@ import { format, sameDay, addDay } from '@formkit/tempo'
 import { db, type Note } from '~/lib/dexie'
 import { liveQuery } from 'dexie'
 
+const { postToWorker } = useSyncWorker()
+
+const loaded = ref(false)
+
 // observable query
 const notesObservable = useObservable(
-  liveQuery(() =>
-    db.notes.where('userId').equals('local').reverse().sortBy('createdAt')
-  ) as any
+  liveQuery(() => {
+    loaded.value = true
+    return db.notes
+      .where('userId')
+      .equals('local')
+      .reverse()
+      .sortBy('createdAt')
+  }) as any
 ) as Ref<Note[] | undefined>
 
 const formatDateHeader = (date: Date): string => {

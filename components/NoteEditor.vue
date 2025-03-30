@@ -122,7 +122,7 @@ import { BubbleMenu } from '@tiptap/vue-3'
 
 const props = defineProps({
   content: {
-    type: Object,
+    type: [Object, null],
     default: {},
   },
   title: {
