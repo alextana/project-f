@@ -22,8 +22,8 @@ export default defineEventHandler(async (event) => {
 
   await db.insert(note).values({
     id: newId,
-    title: '',
-    content: '',
+    title: null,
+    content: null,
     userId: session.user.id,
   })
 

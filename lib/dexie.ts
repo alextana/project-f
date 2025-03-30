@@ -3,7 +3,7 @@ import Dexie, { type EntityTable } from 'dexie'
 interface Note {
   id: string
   title: string | null
-  content: string | null
+  content: Object | null
   userId: string
   updatedAt: string
   deletedAt: string | null
