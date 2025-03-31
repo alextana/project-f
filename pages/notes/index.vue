@@ -48,11 +48,13 @@
 </template>
 
 <script setup lang="ts">
+import { useSession } from '~/lib/auth-client'
 import { format, sameDay, addDay } from '@formkit/tempo'
 import { db, type Note } from '~/lib/dexie'
 import { liveQuery } from 'dexie'
 import { from } from 'rxjs'
 import { map, startWith } from 'rxjs/operators'
+const session = useSession()
 
 const { postToWorker } = useSyncWorker()
 
@@ -69,7 +71,7 @@ const notesObservable = useObservable(
     liveQuery(() => {
       return db.notes
         .where('userId')
-        .equals('local')
+        .equals(session.value.data?.user?.id || 'local')
         .reverse()
         .sortBy('createdAt')
     })

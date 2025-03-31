@@ -1,5 +1,7 @@
 import { db } from '~/lib/dexie'
 import { nanoid } from 'nanoid'
+import { useSession } from '~/lib/auth-client'
+const session = useSession()
 
 export const useCreateNote = () => {
   const createNote = () => {
@@ -12,7 +14,7 @@ export const useCreateNote = () => {
         id,
         title: null,
         content: '',
-        userId: 'local',
+        userId: session.value.data?.user?.id || 'local',
         deletedAt: null,
         updatedAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),

@@ -59,9 +59,9 @@ export const note = sqliteTable('note', {
   id: text().primaryKey().unique(),
   title: text(),
   content: text(),
-  createdAt: integer('created_at', { mode: 'timestamp' }),
-  deletedAt: integer('deleted_at', { mode: 'timestamp' }),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }),
+  createdAt: text('created_at'),
+  deletedAt: text('deleted_at'),
+  updatedAt: text('updated_at'),
   userId: text()
     .notNull()
     .references(() => user.id),
@@ -77,9 +77,7 @@ export const noteAccess = sqliteTable(
     userId: text('user_id')
       .notNull()
       .references(() => user.id),
-    createdAt: integer('created_at', { mode: 'timestamp' })
-      .notNull()
-      .default(sql`(current_timestamp)`),
+    createdAt: text('created_at'),
   },
   (table) => {
     return [primaryKey({ columns: [table.noteId, table.userId] })]

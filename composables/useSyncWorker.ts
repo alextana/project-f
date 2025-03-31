@@ -28,6 +28,7 @@ export const useSyncWorker = () => {
     id: string
     noteId: string
     userId: string
+    action: 'update' | 'create' | 'delete'
   }
   const postToWorker = (message: { type: 'notes'; body: NoteBody }) => {
     worker.postMessage(message)

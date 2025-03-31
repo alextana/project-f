@@ -7,17 +7,27 @@ import { ofetch } from 'ofetch'
  */
 
 self.addEventListener('message', async (event: MessageEvent) => {
-  if (event.data.type === 'notes') {
+  if (event.data?.type === 'notes') {
     /**
      * Sync with the server
      * pass the body to the api and deal with conflict resolution
      */
+    let note = null
+
+    if (
+      event.data.body.action === 'update' ||
+      event.data.body.action === 'delete'
+    ) {
+      note = await db.notes.get(event.data.body.noteId)
+    }
+
     const sync = await ofetch('/api/sync/notes/diff', {
       method: 'POST',
-      body: event.data.body,
+      body: {
+        ...event.data.body,
+        ...(note && { note: note }),
+      },
     })
-
-    console.log('dd', sync)
 
     // try {
     //   self.postMessage({ status: 'success', message: 'sync happened!' })

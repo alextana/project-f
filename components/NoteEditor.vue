@@ -194,6 +194,7 @@ const addToQueueAndSync = useDebounceFn(async () => {
       id: id,
       noteId: props.noteId,
       userId: session.value.data?.user.id as string,
+      action: 'update',
     },
   })
 }, 800)

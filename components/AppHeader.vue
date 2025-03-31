@@ -34,7 +34,7 @@ const { socialSignIn } = useLogin()
 
 const login = () =>
   socialSignIn('google', {
-    callbackURL: '/notes?loggedIn=true',
+    callbackURL: '/notes/logged-in',
     errorCallbackURL: '/login/error',
     newUserCallbackURL: '/first-login',
   })
