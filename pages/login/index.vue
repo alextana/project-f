@@ -8,14 +8,14 @@
 </template>
 
 <script setup lang="ts">
-import { signIn, signOut, useSession } from '~/lib/auth-client'
+import { signOut, useSession } from '~/lib/auth-client'
 const session = useSession()
+const { socialSignIn } = useLogin()
 
-const login = async () =>
-  await signIn.social({
-    provider: 'google',
-    callbackURL: '/',
-    errorCallbackURL: '/error',
-    newUserCallbackURL: '/',
+const login = () =>
+  socialSignIn('google', {
+    callbackURL: '/notes?loggedIn=true',
+    errorCallbackURL: '/login/error',
+    newUserCallbackURL: '/first-login',
   })
 </script>
