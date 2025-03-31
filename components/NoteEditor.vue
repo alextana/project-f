@@ -119,10 +119,15 @@
 <script setup lang="ts">
 import { db } from '~/lib/dexie'
 import { BubbleMenu } from '@tiptap/vue-3'
+import { useSession } from '~/lib/auth-client'
+import { nanoid } from 'nanoid'
+import superjson from 'superjson'
+
+const session = useSession()
 
 const props = defineProps({
   content: {
-    type: [Object, null],
+    type: String,
     default: {},
   },
   title: {
@@ -134,8 +139,9 @@ const props = defineProps({
   },
 })
 
-const title = ref(props.title || 'Untitled note')
-
+const { postToWorker } = useSyncWorker()
+const title = ref(props.title || 'New note')
+const contentVal = ref(null)
 const isSyncing = ref(false)
 
 const editor = useEditor({
@@ -153,11 +159,51 @@ onBeforeUnmount(() => {
   unref(editor)?.destroy()
 })
 
+onMounted(() => {
+  if (!!unref(editor)) {
+    unref(editor)?.commands.setContent(
+      props.content ? superjson.parse(props.content) : ''
+    )
+  }
+})
+
+/**
+ * Add to the indexed db queue
+ * so it can be worked on in the background
+ */
+const addToQueueAndSync = useDebounceFn(async () => {
+  const id = nanoid()
+  try {
+    await db.noteQueue.add({
+      id: id,
+      noteId: props.noteId,
+      userId: session.value.data?.user.id as string,
+      action: 'update',
+      title: title.value,
+      content: superjson.stringify(contentVal.value),
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      completedAt: null,
+    })
+  } catch (error) {
+    console.error(error)
+  }
+  postToWorker({
+    type: 'notes',
+    body: {
+      id: id,
+      noteId: props.noteId,
+      userId: session.value.data?.user.id as string,
+    },
+  })
+}, 800)
+
 const saveNote = async (field: 'title' | 'content', value: any) => {
   if (field === 'content') {
     await nextTick()
 
-    value = unref(editor)?.getJSON()
+    value = superjson.stringify(unref(editor)?.getJSON())
+    contentVal.value = value
   }
 
   try {
@@ -168,23 +214,15 @@ const saveNote = async (field: 'title' | 'content', value: any) => {
   } catch (error) {
     console.error(`Error saving ${field}`, error)
   }
+
+  // sync if logged in - TODO && if preferences
+  if (session.value.data?.user?.id) {
+    addToQueueAndSync()
+  }
 }
 
 const saveTitle = () => saveNote('title', title.value)
 const saveContent = () => saveNote('content', null)
-
-onMounted(() => {
-  if (!!unref(editor)) {
-    let content = null
-    try {
-      content = props.content
-    } catch (error) {
-      return
-    }
-
-    unref(editor)?.commands.setContent(props.content)
-  }
-})
 </script>
 
 <style>

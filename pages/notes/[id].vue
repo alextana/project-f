@@ -1,10 +1,10 @@
 <template>
-  <div v-if="loaded && !notesObservable">Note could not be found.</div>
+  <!-- <div v-if="loaded && !notesObservable">Note could not be found.</div> -->
 
   <div ref="parent">
     <NoteEditor
       v-if="notesObservable"
-      :content="notesObservable.content || null"
+      :content="notesObservable.content || ''"
       :title="notesObservable.title || ''"
       :note-id="route.params.id as string || ''"
     />
@@ -14,17 +14,26 @@
 <script setup lang="ts">
 import { db, type Note } from '~/lib/dexie'
 import { liveQuery } from 'dexie'
+import { from } from 'rxjs'
+import { map, startWith } from 'rxjs/operators'
 
 const [parent] = useAutoAnimate()
 
 const route = useRoute()
 const loaded = ref(false)
 
+onBeforeUnmount(() => (loaded.value = false))
+
 const notesObservable = useObservable(
-  liveQuery(() => {
-    loaded.value = true
-    return db.notes.get(route.params.id as string)
-  }) as any
+  from(
+    liveQuery(() => {
+      return db.notes.get(route.params.id as string)
+    })
+  ).pipe(
+    startWith(undefined as Note | undefined),
+    map((note) => note)
+  ),
+  undefined
 ) as Ref<Note | undefined>
 
 /**
@@ -34,7 +43,7 @@ const notesObservable = useObservable(
  */
 onBeforeRouteLeave(async () => {
   if (
-    notesObservable.value?.content === null &&
+    notesObservable.value?.content === '' &&
     notesObservable.value?.title === null &&
     notesObservable.value?.createdAt === notesObservable.value?.updatedAt
   ) {

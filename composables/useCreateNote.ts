@@ -11,7 +11,7 @@ export const useCreateNote = () => {
       note = db.notes.add({
         id,
         title: null,
-        content: null,
+        content: '',
         userId: 'local',
         deletedAt: null,
         updatedAt: new Date().toISOString(),

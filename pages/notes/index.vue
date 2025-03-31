@@ -1,11 +1,9 @@
 <template>
-  <div
-    v-if="(loaded && !groupedNotes) || Object.keys(groupedNotes).length === 0"
+  <!-- <div
+    v-if="loaded && (!groupedNotes || Object.keys(groupedNotes).length === 0)"
   >
     Notes could not be found.
-  </div>
-
-  <UButton @click="postToWorker"> sync now </UButton>
+  </div> -->
 
   <div
     class="my-4"
@@ -34,7 +32,7 @@
             class="text-gray-400 text-2xl block mb-2"
           />
           <span class="font-semibold">
-            {{ note.title || 'Untitled note' }}
+            {{ note.title || 'New note' }}
           </span>
 
           <div class="edited">
@@ -53,21 +51,36 @@
 import { format, sameDay, addDay } from '@formkit/tempo'
 import { db, type Note } from '~/lib/dexie'
 import { liveQuery } from 'dexie'
+import { from } from 'rxjs'
+import { map, startWith } from 'rxjs/operators'
 
 const { postToWorker } = useSyncWorker()
 
 const loaded = ref(false)
 
-// observable query
+onBeforeUnmount(() => (loaded.value = false))
+
+onMounted(() => {
+  // postToWorker('notes')
+})
+
 const notesObservable = useObservable(
-  liveQuery(() => {
-    loaded.value = true
-    return db.notes
-      .where('userId')
-      .equals('local')
-      .reverse()
-      .sortBy('createdAt')
-  }) as any
+  from(
+    liveQuery(() => {
+      return db.notes
+        .where('userId')
+        .equals('local')
+        .reverse()
+        .sortBy('createdAt')
+    })
+  ).pipe(
+    startWith(undefined as Note[] | undefined),
+    map((notes) => {
+      loaded.value = true
+      return notes
+    })
+  ),
+  {}
 ) as Ref<Note[] | undefined>
 
 const formatDateHeader = (date: Date): string => {
