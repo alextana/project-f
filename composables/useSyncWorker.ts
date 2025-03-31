@@ -24,8 +24,13 @@ if (!worker) {
 }
 
 export const useSyncWorker = () => {
-  const postToWorker = () => {
-    worker.postMessage('sync')
+  interface NoteBody {
+    id: string
+    noteId: string
+    userId: string
+  }
+  const postToWorker = (message: { type: 'notes'; body: NoteBody }) => {
+    worker.postMessage(message)
   }
 
   return {
