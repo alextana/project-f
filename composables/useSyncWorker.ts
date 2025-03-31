@@ -1,4 +1,5 @@
 import Worker from '@/assets/workers/sync.worker.ts?worker'
+import { db } from '~/lib/dexie'
 
 // the worker should probably be a singleton
 let worker: Worker | null = null
@@ -25,10 +26,10 @@ if (!worker) {
 
 export const useSyncWorker = () => {
   interface NoteBody {
-    id: string
-    noteId: string
+    id?: string
+    noteId?: string
     userId: string
-    action: 'update' | 'create' | 'delete'
+    action: 'update' | 'create' | 'delete' | 'compare_all'
   }
   const postToWorker = (message: { type: 'notes'; body: NoteBody }) => {
     worker.postMessage(message)

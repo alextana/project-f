@@ -8,13 +8,19 @@ interface Note {
   updatedAt: string
   deletedAt: string | null
   createdAt: string
-  isPublic: boolean
+  isPublic: string
 }
 
 interface NoteAccess {
   noteId: string
   userId: string
   createdAt: string
+}
+
+interface Settings {
+  userId: string
+  lastSynced: string
+  automaticSync: string
 }
 
 interface NoteQueue {
@@ -33,12 +39,14 @@ const db = new Dexie('Notes') as Dexie & {
   notes: EntityTable<Note, 'id'>
   noteAccess: EntityTable<NoteAccess>
   noteQueue: EntityTable<NoteQueue, 'noteId'>
+  settings: EntityTable<Settings, 'userId'>
 }
 
-db.version(3).stores({
+db.version(4).stores({
   notes: '&id, title, content, userId, updatedAt, deletedAt, createdAt',
   noteAccess: '[noteId+userId], noteId, userId, createdAt',
   noteQueue: '&id, noteId, userId, title, content, action, status',
+  settings: '&userId, lastSynced, automaticSync',
 })
 
 export type { Note, NoteAccess, NoteQueue }

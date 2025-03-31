@@ -1,10 +1,18 @@
 <template>
-  <!-- <div
-    v-if="loaded && (!groupedNotes || Object.keys(groupedNotes).length === 0)"
-  >
-    Notes could not be found.
-  </div> -->
-
+  <div v-if="session.data?.user?.id">
+    <UButton
+      @click="
+        postToWorker({
+          type: 'notes',
+          body: {
+            userId: session.data?.user.id as string,
+            action: 'compare_all',
+          },
+        })
+      "
+      >Sync now!</UButton
+    >
+  </div>
   <div
     class="my-4"
     v-for="(notes, dateHeader) in groupedNotes"
@@ -20,7 +28,7 @@
           class="hover:outline-1 relative self-stretch h-full hover:outline-gray-600 bg-neutral-950/20 hover:bg-neutral-950/30"
         >
           <div
-            v-if="note.isPublic === false"
+            v-if="JSON.parse(note.isPublic) === false"
             class="note shared absolute right-2 top-2"
           >
             <UTooltip text="Private note" :delay-duration="0">
@@ -61,10 +69,6 @@ const { postToWorker } = useSyncWorker()
 const loaded = ref(false)
 
 onBeforeUnmount(() => (loaded.value = false))
-
-onMounted(() => {
-  // postToWorker('notes')
-})
 
 const notesObservable = useObservable(
   from(

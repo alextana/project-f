@@ -140,6 +140,8 @@ const props = defineProps({
 })
 
 const { postToWorker } = useSyncWorker()
+const { syncLocal } = useSyncDatabase()
+
 const title = ref(props.title || 'New note')
 const contentVal = ref(null)
 const isSyncing = ref(false)
@@ -173,6 +175,7 @@ onMounted(() => {
  */
 const addToQueueAndSync = useDebounceFn(async () => {
   const id = nanoid()
+
   try {
     await db.noteQueue.add({
       id: id,
@@ -212,6 +215,8 @@ const saveNote = async (field: 'title' | 'content', value: any) => {
       [field]: value,
       updatedAt: new Date().toISOString(),
     })
+
+    syncLocal()
   } catch (error) {
     console.error(`Error saving ${field}`, error)
   }

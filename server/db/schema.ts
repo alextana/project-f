@@ -65,7 +65,7 @@ export const note = sqliteTable('note', {
   userId: text()
     .notNull()
     .references(() => user.id),
-  isPublic: integer('is_public', { mode: 'boolean' }).default(false),
+  isPublic: text('is_public').default('false'),
 })
 
 export const noteAccess = sqliteTable(
@@ -91,4 +91,12 @@ export const noteLink = sqliteTable('note_link', {
   linkedNoteId: text()
     .notNull()
     .references(() => note.id),
+})
+
+export const settings = sqliteTable('settings', {
+  userId: text()
+    .notNull()
+    .references(() => user.id),
+  lastSynced: text('last_synced'),
+  automaticSync: text('automatic_sync').default('false'),
 })
