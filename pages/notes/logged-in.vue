@@ -6,9 +6,7 @@ import { useSession } from '~/lib/auth-client'
 import AutomaticSyncModal from '~/components/AutomaticSyncModal.vue'
 
 const session = useSession()
-
 const overlay = useOverlay()
-
 const modal = overlay.create(AutomaticSyncModal, {})
 
 watch(
