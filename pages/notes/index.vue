@@ -1,4 +1,4 @@
-<template>
+<template v-slot="slotProps">
   <UButton label="Seed" @click="seed" />
   <div
     class="my-4"
@@ -45,34 +45,11 @@
 <script setup lang="ts">
 import { useSession } from '~/lib/auth-client'
 import { format, sameDay, addDay } from '@formkit/tempo'
-import { type Note } from '~/lib/dexie'
+import { db, type Note } from '~/lib/dexie'
 import { seed } from '~/utils/seed'
 
 const session = useSession()
-
-const { getAllNotes, allNotes } = useFetchWorker()
-const notesObservable = ref([])
-
-const getNotes = async () => {
-  await getAllNotes({
-    type: 'all',
-    body: {
-      userId: session.value.data?.user.id as string,
-    },
-  })
-}
-
-watch(
-  allNotes,
-  () => {
-    notesObservable.value = allNotes.value
-  },
-  { once: true }
-)
-
-onMounted(() => {
-  getNotes()
-})
+const notesObservable = ref<Note[]>([])
 
 const formatDateHeader = (date: Date): string => {
   const today = new Date()
@@ -111,4 +88,38 @@ const groupedNotes = computed(() => {
 
   return grouped
 })
+
+const el = inject('contentEl')
+const limit = 100
+const page = ref(0)
+const offset = ref(0)
+const total = await db.notes.count()
+
+const getNotes = async () => {
+  const notes = await db.notes
+    .where('userId')
+    .anyOf([session.value.data?.user.id as string, 'local'])
+    .offset(offset.value)
+    .limit(limit)
+    .reverse()
+    .sortBy('createdAt')
+
+  return notes || []
+}
+
+useInfiniteScroll(
+  el as HTMLElement,
+  async () => {
+    page.value++
+    const moreData = await getNotes()
+    offset.value = offset.value + limit
+    notesObservable.value.push(...moreData)
+  },
+  {
+    distance: 300,
+    canLoadMore: () => {
+      return notesObservable.value?.length <= total
+    },
+  }
+)
 </script>
