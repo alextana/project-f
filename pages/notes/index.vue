@@ -15,7 +15,7 @@
           class="hover:outline-1 relative self-stretch h-full hover:outline-gray-600 bg-neutral-950/20 hover:bg-neutral-950/30"
         >
           <div
-            v-if="JSON.parse(note.isPublic) === false"
+            v-if="note.isPublic === 'false'"
             class="note shared absolute right-2 top-2"
           >
             <UTooltip text="Private note" :delay-duration="0">
@@ -45,34 +45,34 @@
 <script setup lang="ts">
 import { useSession } from '~/lib/auth-client'
 import { format, sameDay, addDay } from '@formkit/tempo'
-import { db, type Note } from '~/lib/dexie'
-import { liveQuery } from 'dexie'
-import { from } from 'rxjs'
-import { map, startWith } from 'rxjs/operators'
+import { type Note } from '~/lib/dexie'
 import { seed } from '~/utils/seed'
 
-const { data: session } = await useSession(useFetch)
-const loaded = ref(false)
+const session = useSession()
 
-const notesObservable = useObservable(
-  from(
-    liveQuery(() => {
-      return db.notes
-        .where('userId')
-        .anyOf([session.value?.user?.id as string, 'local'])
-        .reverse()
-        .sortBy('createdAt')
-    })
-  ).pipe(
-    startWith(undefined as Note[] | undefined),
-    map((notes) => {
-      if (notes?.length) {
-        loaded.value = true
-      }
-      return notes
-    })
-  )
-) as Ref<Note[] | undefined>
+const { getAllNotes, allNotes } = useFetchWorker()
+const notesObservable = ref([])
+
+const getNotes = async () => {
+  await getAllNotes({
+    type: 'all',
+    body: {
+      userId: session.value.data?.user.id as string,
+    },
+  })
+}
+
+watch(
+  allNotes,
+  () => {
+    notesObservable.value = allNotes.value
+  },
+  { once: true }
+)
+
+onMounted(() => {
+  getNotes()
+})
 
 const formatDateHeader = (date: Date): string => {
   const today = new Date()
@@ -96,7 +96,7 @@ const groupedNotes = computed(() => {
 
   const grouped: { [key: string]: Note[] } = {}
 
-  notesObservable.value.forEach((note) => {
+  notesObservable.value.forEach((note: Note) => {
     if (!note.createdAt) return
 
     const createdAtDate = new Date(note.createdAt)

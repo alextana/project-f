@@ -4,14 +4,12 @@
     <UButton @click="getPrevNextId('next')" icon="lucide-chevron-right" />
   </div>
   <!-- <div v-if="loaded && !notesObservable">Note could not be found.</div> -->
-  <KeepAlive>
-    <NoteEditor
-      v-if="notesObservable"
-      :content="notesObservable.content || ''"
-      :title="notesObservable.title || ''"
-      :note-id="route.params.id as string || ''"
-    />
-  </KeepAlive>
+  <NoteEditor
+    v-if="notesObservable"
+    :content="notesObservable.content || ''"
+    :title="notesObservable.title || ''"
+    :note-id="route.params.id as string || ''"
+  />
 </template>
 
 <script setup lang="ts">
@@ -68,7 +66,7 @@ async function getPrevNextId(direction: string) {
 
   if (direction === 'next') {
     let nextNote = await db.notes
-      .orderBy('createdAt') // Use orderBy for string dates
+      .orderBy('createdAt')
       .filter((note) => new Date(note.createdAt) > currentDate) // Custom filter
       .first()
 
@@ -80,7 +78,7 @@ async function getPrevNextId(direction: string) {
 
   if (direction === 'previous') {
     let previousNotes = await db.notes
-      .orderBy('createdAt') // Use orderBy for string dates
+      .orderBy('createdAt')
       .filter((note) => new Date(note.createdAt) < currentDate) // Custom filter
       .first()
 

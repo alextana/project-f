@@ -1,5 +1,4 @@
 import Worker from '@/assets/workers/sync.worker.ts?worker'
-import { db } from '~/lib/dexie'
 
 // the worker should probably be a singleton
 let worker: Worker | null = null
