@@ -1,18 +1,5 @@
 <template>
-  <div v-if="session.data?.user?.id">
-    <UButton
-      @click="
-        postToWorker({
-          type: 'notes',
-          body: {
-            userId: session.data?.user.id as string,
-            action: 'compare_all',
-          },
-        })
-      "
-      >Sync now!</UButton
-    >
-  </div>
+  <UButton label="Seed" @click="seed" />
   <div
     class="my-4"
     v-for="(notes, dateHeader) in groupedNotes"
@@ -62,31 +49,29 @@ import { db, type Note } from '~/lib/dexie'
 import { liveQuery } from 'dexie'
 import { from } from 'rxjs'
 import { map, startWith } from 'rxjs/operators'
-const session = useSession()
+import { seed } from '~/utils/seed'
 
-const { postToWorker } = useSyncWorker()
-
+const { data: session } = await useSession(useFetch)
 const loaded = ref(false)
-
-onBeforeUnmount(() => (loaded.value = false))
 
 const notesObservable = useObservable(
   from(
     liveQuery(() => {
       return db.notes
         .where('userId')
-        .equals(session.value.data?.user?.id || 'local')
+        .anyOf([session.value?.user?.id as string, 'local'])
         .reverse()
         .sortBy('createdAt')
     })
   ).pipe(
     startWith(undefined as Note[] | undefined),
     map((notes) => {
-      loaded.value = true
+      if (notes?.length) {
+        loaded.value = true
+      }
       return notes
     })
-  ),
-  {}
+  )
 ) as Ref<Note[] | undefined>
 
 const formatDateHeader = (date: Date): string => {
