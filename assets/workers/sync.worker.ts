@@ -16,6 +16,40 @@ const syncAllNotes = async (event: MessageEvent) => {
     .equals(event.data.body.userId)
     .toArray()
 
+  /**
+   * if we don't have any notes in the local db
+   * we can fetch them from the server backup
+   */
+  if (!localNotes || localNotes?.length === 0) {
+    let remoteNotes = []
+    try {
+      remoteNotes = await ofetch('/api/notes/getNotes')
+    } catch (error) {
+      self.postMessage({
+        status: 'error',
+        message: 'Could not retrieve notes..',
+        error: error,
+      })
+    }
+
+    try {
+      await db.notes.bulkAdd(remoteNotes.notes)
+
+      self.postMessage({
+        status: 'success',
+        message: `[SYNC SYCCESS] - Synced notes from the server`,
+      })
+    } catch (error) {
+      self.postMessage({
+        status: 'error',
+        message: 'Could not sync from the server..',
+        error: error,
+      })
+    }
+
+    return
+  }
+
   return await ofetch('/api/sync/notes/all', {
     method: 'POST',
     body: {
@@ -56,19 +90,20 @@ self.addEventListener('message', async (event: MessageEvent) => {
           ...(note && { note: note }),
         },
       })
-    } catch (error) {
-      console.error(error)
-    }
 
-    // try {
-    //   self.postMessage({ status: 'success', message: 'sync happened!' })
-    // } catch (error) {
-    //   self.postMessage({
-    //     status: 'error',
-    //     message: 'something went wrong..',
-    //     error: error,
-    //   })
-    // }
+      self.postMessage({
+        status: 'success',
+        message: `[SYNC ${event.data.body.action.toUpperCase()} SUCCESS] - note ${
+          event.data.body.noteId
+        }`,
+      })
+    } catch (error) {
+      self.postMessage({
+        status: 'error',
+        message: 'something went wrong..',
+        error: error,
+      })
+    }
 
     return {
       updatedNote,

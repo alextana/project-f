@@ -1,5 +1,3 @@
-<template></template>
-
 <script setup lang="ts">
 import { db } from '~/lib/dexie'
 import { useSession } from '~/lib/auth-client'
@@ -13,6 +11,14 @@ watch(
   session,
   async () => {
     if (!session?.value?.data?.user.id) return
+
+    postToWorker({
+      type: 'notes',
+      body: {
+        userId: session.value.data?.user?.id as string,
+        action: 'compare_all',
+      },
+    })
 
     const userSettings = await db.settings.get(
       session.value.data?.user?.id as string
@@ -37,6 +43,8 @@ watch(
   }
 )
 
+const { postToWorker } = useSyncWorker()
+
 async function open() {
   const shouldSync = await modal.open()
 
@@ -48,6 +56,7 @@ async function open() {
         automaticSync: shouldSync.toString(),
       })
     } catch (error) {}
+
     navigateTo('/notes')
   }
 }

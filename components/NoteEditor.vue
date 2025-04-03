@@ -139,8 +139,8 @@ const props = defineProps({
   },
 })
 
-const { postToWorker } = useSyncWorker()
 const { syncLocal } = useSyncDatabase()
+const { addActionToQueue } = useSyncQueue()
 
 const title = ref(props.title || 'New note')
 const contentVal = ref(null)
@@ -176,29 +176,16 @@ onMounted(() => {
 const addToQueueAndSync = useDebounceFn(async () => {
   const id = nanoid()
 
-  try {
-    await db.noteQueue.add({
-      id: id,
-      noteId: props.noteId,
-      userId: session.value.data?.user.id as string,
-      action: 'update',
-      title: title.value,
-      content: superjson.stringify(contentVal.value),
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-      completedAt: null,
-    })
-  } catch (error) {
-    console.error(error)
-  }
-  postToWorker({
-    type: 'notes',
-    body: {
-      id: id,
-      noteId: props.noteId,
-      userId: session.value.data?.user.id as string,
-      action: 'update',
-    },
+  await addActionToQueue({
+    id: id,
+    noteId: props.noteId,
+    userId: session.value.data?.user.id as string,
+    action: 'update',
+    title: title.value,
+    content: superjson.stringify(contentVal.value),
+    status: 'pending',
+    createdAt: new Date().toISOString(),
+    completedAt: null,
   })
 }, 800)
 
