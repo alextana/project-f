@@ -55,36 +55,38 @@ onBeforeRouteLeave(async () => {
 })
 
 async function getPrevNextId(direction: string) {
-  const currentNoteId = route.params.id as string
+  if (!route.params.id) return null
 
-  if (!currentNoteId) return null
-
-  const currentNote = await db.notes.get(currentNoteId)
+  const currentNote = await db.notes.get(route.params.id as string)
 
   if (!currentNote) return null
+
   const currentDate = new Date(currentNote.createdAt)
 
   if (direction === 'next') {
     let nextNote = await db.notes
       .orderBy('createdAt')
-      .filter((note) => new Date(note.createdAt) > currentDate) // Custom filter
+      .reverse()
+      .filter((note) => new Date(note.createdAt) < currentDate)
       .first()
 
-    if (nextNote) {
-      navigateTo(`/notes/${nextNote.id}`)
-    }
+    if (!nextNote) return
+
+    navigateTo(`/notes/${nextNote.id}`)
+
     return
   }
 
   if (direction === 'previous') {
-    let previousNotes = await db.notes
+    let previousNote = await db.notes
       .orderBy('createdAt')
-      .filter((note) => new Date(note.createdAt) < currentDate) // Custom filter
+      .filter((note) => new Date(note.createdAt) > currentDate)
       .first()
 
-    if (previousNotes) {
-      navigateTo(`/notes/${previousNotes.id}`)
-    }
+    if (!previousNote) return
+
+    navigateTo(`/notes/${previousNote.id}`)
+
     return
   }
 

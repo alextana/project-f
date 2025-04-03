@@ -1,125 +1,56 @@
-<template v-slot="slotProps">
-  <UButton label="Seed" @click="seed" />
-  <div
-    class="my-4"
-    v-for="(notes, dateHeader) in groupedNotes"
-    :key="dateHeader"
-  >
-    <div class="mb-2 flex gap-1 font-extrabold items-center text-gray-400">
-      <UIcon name="lucide-calendar" class="text-sm block mb-2" />
-      <span class="mb-2 text-sm">{{ dateHeader }}</span>
-    </div>
-    <div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
-      <NuxtLink :to="`/notes/${note.id}`" v-for="note in notes" :key="note.id">
-        <UCard
-          class="hover:outline-1 relative self-stretch h-full hover:outline-gray-600 bg-neutral-950/20 hover:bg-neutral-950/30"
-        >
-          <div
-            v-if="note.isPublic === 'false'"
-            class="note shared absolute right-2 top-2"
-          >
-            <UTooltip text="Private note" :delay-duration="0">
-              <UIcon name="lucide-earth-lock" class="text-gray-500 text-md" />
-            </UTooltip>
-          </div>
-          <UIcon
-            name="lucide-sticky-note"
-            class="text-gray-400 text-2xl block mb-2"
-          />
-          <span class="font-semibold">
-            {{ note.title || 'New note' }}
-          </span>
+<template>
+  <div class="flex justify-end w-full">
+    <UButton label="Seed random notes" @click="seedNotes" />
+  </div>
 
-          <div class="edited">
-            <span v-if="note.updatedAt" class="text-[10px] text-gray-400">
-              Last edited:
-              {{ format(note.updatedAt, { date: 'medium', time: 'short' }) }}
-            </span>
-          </div>
-        </UCard>
-      </NuxtLink>
-    </div>
+  <div class="my-8 grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
+    <NuxtLink
+      :to="`/notes/${note.id}`"
+      v-for="note in notesObservable"
+      :key="note.id"
+    >
+      <div
+        class="hover:outline-1 group p-4 shadow-xl border border-neutral-800 rounded-xl relative self-stretch h-full hover:outline-gray-600 bg-neutral-950/20 hover:bg-neutral-950/30"
+      >
+        <div
+          v-if="note.isPublic === 'false'"
+          class="note shared absolute right-2 top-2"
+        ></div>
+        <UIcon
+          name="lucide-sticky-note"
+          class="text-gray-400 text-2xl block mb-2"
+        />
+        <span class="font-semibold">
+          {{ note.title || 'New note' }}
+        </span>
+
+        <div class="edited">
+          <span v-if="note.updatedAt" class="text-[10px] text-gray-400">
+            <!-- Last edited: -->
+            <!-- {{ format(note.updatedAt, { date: 'medium', time: 'short' }) }} -->
+          </span>
+        </div>
+      </div>
+    </NuxtLink>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useSession } from '~/lib/auth-client'
-import { format, sameDay, addDay } from '@formkit/tempo'
 import { db, type Note } from '~/lib/dexie'
 import { seed } from '~/utils/seed'
 
-const session = useSession()
 const notesObservable = ref<Note[]>([])
 
-const formatDateHeader = (date: Date): string => {
-  const today = new Date()
-  const yesterday = addDay(new Date(), -1)
-
-  if (sameDay(date, today)) {
-    return 'Today'
-  }
-
-  if (sameDay(date, yesterday)) {
-    return 'Yesterday'
-  }
-
-  return format(date, { date: 'medium' })
-}
-
-const groupedNotes = computed(() => {
-  if (!notesObservable.value) {
-    return {}
-  }
-
-  const grouped: { [key: string]: Note[] } = {}
-
-  notesObservable.value.forEach((note: Note) => {
-    if (!note.createdAt) return
-
-    const createdAtDate = new Date(note.createdAt)
-    const dateHeader = formatDateHeader(createdAtDate)
-
-    if (!grouped[dateHeader]) {
-      grouped[dateHeader] = []
-    }
-
-    grouped[dateHeader].push(note)
-  })
-
-  return grouped
-})
-
-const el = inject('contentEl')
-const limit = 100
-const page = ref(0)
-const offset = ref(0)
-const total = await db.notes.count()
-
 const getNotes = async () => {
-  const notes = await db.notes
-    .where('userId')
-    .anyOf([session.value.data?.user.id as string, 'local'])
-    .offset(offset.value)
-    .limit(limit)
-    .reverse()
-    .sortBy('createdAt')
+  notesObservable.value = []
 
-  return notes || []
+  const notes = await db.notes.reverse().sortBy('createdAt')
+  notesObservable.value = notes || []
 }
 
-useInfiniteScroll(
-  el as HTMLElement,
-  async () => {
-    page.value++
-    const moreData = await getNotes()
-    offset.value = offset.value + limit
-    notesObservable.value.push(...moreData)
-  },
-  {
-    distance: 300,
-    canLoadMore: () => {
-      return notesObservable.value?.length <= total
-    },
-  }
-)
+getNotes()
+
+const seedNotes = async () => {
+  await seed()
+}
 </script>
