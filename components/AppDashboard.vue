@@ -1,6 +1,6 @@
 <template>
   <div class="mt-4 mb-8 max-w-[960px] mx-auto">
-    <h1 v-if="session.data?.user?.id" class="text-3xl font-bold line-through">
+    <h1 class="text-3xl font-bold line-through">
       {{ getGreeting() }}
       <span v-if="session.data?.user">{{
         session.data.user?.name?.split(' ')[0] || ''
