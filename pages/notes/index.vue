@@ -72,8 +72,9 @@ const bytesToMb = (bytes: number) => {
   return Math.round(mb)
 }
 
-function bytesToGB(bytes: number) {
+function bytesToGB(bytes: number, decimalPlaces = 2) {
   const gb = bytes / (1024 * 1024 * 1024)
-  return Math.round(gb)
+  const roundedGB = Number(gb.toFixed(decimalPlaces))
+  return roundedGB
 }
 </script>
