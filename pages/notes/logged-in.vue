@@ -1,3 +1,8 @@
+<template>
+  <div class="grid place-content-center w-full pt-[300px]">
+    <UIcon name="lucide-disc-3" class="animate-spin w-24 h-24" />
+  </div>
+</template>
 <script setup lang="ts">
 import { db } from '~/lib/dexie'
 import { useSession } from '~/lib/auth-client'
