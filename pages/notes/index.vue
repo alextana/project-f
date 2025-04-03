@@ -2,7 +2,10 @@
   <div class="flex justify-end w-full">
     <UButton label="Seed random notes" @click="seedNotes" />
   </div>
-
+  <span class="text-gray-400" v-if="totSpace && usSpace">
+    Est. total space available: {{ bytesToGB(totSpace) }} GB / Est. used space:
+    {{ bytesToMb(usSpace) }} MB
+  </span>
   <div class="my-8 grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
     <NuxtLink
       :to="`/notes/${note.id}`"
@@ -52,5 +55,25 @@ getNotes()
 
 const seedNotes = async () => {
   await seed()
+}
+
+const quota = await navigator.storage.estimate()
+const totalSpace = Number(quota.quota) || null
+const usedSpace = Number(quota.usage) || null
+
+const totSpace = ref<number | null>(null)
+const usSpace = ref<number | null>(null)
+
+totSpace.value = totalSpace || null
+usSpace.value = usedSpace || null
+
+const bytesToMb = (bytes: number) => {
+  const mb = bytes / (1024 * 1024)
+  return Math.round(mb)
+}
+
+function bytesToGB(bytes: number) {
+  const gb = bytes / (1024 * 1024 * 1024)
+  return Math.round(gb)
 }
 </script>
