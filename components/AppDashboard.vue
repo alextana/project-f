@@ -1,17 +1,11 @@
 <template>
   <div class="mt-4 mb-8 max-w-[960px] mx-auto">
-    <h1 class="text-3xl font-bold line-through">
+    <h1 class="text-3xl font-bold">
       {{ getGreeting() }}
       <span v-if="session.data?.user">{{
         session.data.user?.name?.split(' ')[0] || ''
       }}</span>
     </h1>
-
-    <h2 class="text-6xl mt-4 font-extrabold">Hello engineering team!</h2>
-    <h3 class="text-3xl mt-3">
-      Welcome to this
-      <span class="inline-block shake">⚡ blazingly fast ⚡ </span>demo
-    </h3>
   </div>
 </template>
 
