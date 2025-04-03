@@ -25,6 +25,8 @@ watch(
     try {
       await db.notes.toCollection().modify((note) => {
         note.userId = session.value?.data?.user.id as string
+
+        navigateTo('/')
       })
     } catch (error) {
       console.error(error)

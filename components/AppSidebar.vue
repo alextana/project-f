@@ -1,9 +1,9 @@
 <template>
-  <aside class="w-52 h-[calc(100vh_-_57px)] px-2 py-3 bg-neutral-950/50">
+  <aside class="w-[250px] h-[calc(100vh_-_57px)] px-2 py-3 bg-neutral-950/50">
     <UNavigationMenu
       orientation="vertical"
       :items="items"
-      class="data-[orientation=vertical]:w-48"
+      class="data-[orientation=vertical]:w-[230px]"
     />
   </aside>
 </template>
