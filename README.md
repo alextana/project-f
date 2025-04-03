@@ -2,7 +2,7 @@ A local-first, blazing-fast note-taking application built with Nuxt and Vue.
 
 ## Description
 
-SnappyNote is designed for speed and privacy. Create, organize, and access your notes instantly, whether online or offline. Experience the responsiveness of a native application with the flexibility of the web. SnappyNote aims to provide a streamlined note-taking experience rivaling native apps like Notion in performance.
+this note app is designed for speed and privacy. Create, organize, and access your notes instantly, whether online or offline. Experience the responsiveness of a native application with the flexibility of the web. this note app aims to provide a streamlined note-taking experience rivaling native apps like Notion in performance.
 
 ## Features
 
@@ -13,7 +13,7 @@ SnappyNote is designed for speed and privacy. Create, organize, and access your 
 
 ## Local-First Architecture
 
-SnappyNote leverages a local-first architecture for unparalleled speed and reliability.
+this note app leverages a local-first architecture for unparalleled speed and reliability.
 
 - Offline Availability: The application is fully functional offline.
 - Optimistic Updates: Changes are applied instantly locally and then synced in the background.
