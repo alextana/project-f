@@ -7,12 +7,6 @@
         ><span class="font-extrabold italic">Local first</span> notes</NuxtLink
       >
       <div v-if="!session.isPending" class="user-info flex items-center gap-2">
-        <UAvatar
-          v-if="session.data?.user?.image"
-          :alt="session.data?.user?.name"
-          :src="session.data?.user?.image || undefined"
-          class="outline-2 outline-transparent hover:outline-primary-500 cursor-pointer"
-        />
         <UIcon
           v-if="session.data?.user"
           name="i-lucide-log-out"
