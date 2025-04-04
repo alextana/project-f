@@ -1,8 +1,24 @@
 <template>
-  <aside
-    class="relative w-[250px] h-[calc(100vh_-_57px)] px-2 py-3 bg-neutral-950/50"
-  >
+  <aside class="relative w-[250px] h-screen px-2 py-2 bg-neutral-950/50">
     <header class="flex justify-between items-center">
+      <NuxtLink to="/">
+        <p class="font-extrabold italic p-1">notey</p>
+      </NuxtLink>
+      <UIcon
+        name="lucide-square-pen"
+        class="cursor-pointer text-gray-400 hover:text-primary-500 w-4 h-4"
+        @click="createNote()"
+      />
+    </header>
+
+    <div class="absolute right-5 top-5 z-10"></div>
+    <UNavigationMenu
+      orientation="vertical"
+      :items="items"
+      class="data-[orientation=vertical]:w-[230px] mt-1"
+    />
+
+    <footer class="absolute bottom-2 left-2 w-full p-2">
       <div
         class="flex items-center gap-1 hover:bg-neutral-900 pr-2 rounded-md hover:text-white"
         v-if="!session.isPending && session.data?.user?.id"
@@ -41,18 +57,7 @@
           size="xs"
         />
       </div>
-      <UIcon
-        name="lucide-square-pen"
-        class="cursor-pointer text-gray-400 hover:text-primary-500 w-4 h-4"
-      />
-    </header>
-
-    <div class="absolute right-5 top-5 z-10"></div>
-    <UNavigationMenu
-      orientation="vertical"
-      :items="items"
-      class="data-[orientation=vertical]:w-[230px] mt-1"
-    />
+    </footer>
   </aside>
 </template>
 <script setup>
