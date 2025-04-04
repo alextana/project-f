@@ -37,7 +37,7 @@ const syncAllNotes = async (event: MessageEvent) => {
 
       self.postMessage({
         status: 'success',
-        message: `[SYNC SYCCESS] - Synced notes from the server`,
+        message: `[SYNC SUCCESS] - Synced notes from the server`,
       })
     } catch (error) {
       self.postMessage({
