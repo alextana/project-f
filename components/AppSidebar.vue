@@ -18,44 +18,34 @@
       class="data-[orientation=vertical]:w-[230px] mt-1"
     />
 
-    <footer class="absolute bottom-2 left-2 w-full p-2">
+    <footer class="absolute bottom-2 w-full">
       <div
-        class="flex items-center gap-1 hover:bg-neutral-900 pr-2 rounded-md hover:text-white"
+        class="flex items-center gap-1 rounded-md"
         v-if="!session.isPending && session.data?.user?.id"
       >
         <UPopover>
-          <div class="popover cursor-pointer flex items-center gap-2">
+          <div
+            class="popover cursor-pointer flex items-center gap-2 w-max hover:bg-neutral-900 p-1 rounded-md"
+          >
             <UAvatar
               size="xs"
               v-if="session.data?.user?.image"
               :alt="session.data?.user?.name"
               :src="session.data?.user?.image || undefined"
             />
-
             <h2 class="text-sm font-bold text-gray-400">
               {{ session.data?.user?.name || 'User' }}
             </h2>
           </div>
           <template #content>
-            <div class="w-30 p-3 text-sm">
-              <button
-                type="button"
-                @click="signOut()"
-                class="px-3 py-1 cursor-pointer hover:bg-neutral-800 rounded-md"
-              >
-                Sign out
-              </button>
+            <div class="w-auto p-3 text-sm">
+              <UButton type="button" @click="signOut()"> Sign out </UButton>
             </div>
           </template>
         </UPopover>
       </div>
       <div v-else>
-        <UButton
-          class="cursor-pointer bg-neutral-800 text-white hover:bg-neutral-900"
-          @click="login()"
-          label="Login"
-          size="xs"
-        />
+        <UButton @click="login()" label="Login" size="xs" />
       </div>
     </footer>
   </aside>
@@ -69,7 +59,7 @@ const { socialSignIn } = useLogin()
 
 const login = () =>
   socialSignIn('google', {
-    callbackURL: '/notes/logged-in',
+    callbackURL: '/login/success',
     errorCallbackURL: '/login/error',
     newUserCallbackURL: '/first-login',
   })
