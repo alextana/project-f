@@ -8,6 +8,7 @@ interface Note {
   updatedAt: string
   deletedAt: string | null
   createdAt: string
+  lastVisitedAt: string
   isPublic: string
 }
 
@@ -43,11 +44,12 @@ const db = new Dexie('Notes') as Dexie & {
 }
 
 db.version(4).stores({
-  notes: '&id, title, content, userId, updatedAt, deletedAt, createdAt',
+  notes:
+    '&id, title, content, userId, updatedAt, deletedAt, createdAt, lastVisitedAt',
   noteAccess: '[noteId+userId], noteId, userId, createdAt',
   noteQueue: '&id, noteId, userId, title, content, action, status',
   settings: '&userId, lastSynced, automaticSync',
 })
 
-export type { Note, NoteAccess, NoteQueue }
+export type { Note, NoteAccess, NoteQueue, Settings }
 export { db }

@@ -1,5 +1,4 @@
 import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core'
-import { sql } from 'drizzle-orm'
 
 export const user = sqliteTable('user', {
   id: text('id').primaryKey(),
@@ -62,6 +61,7 @@ export const note = sqliteTable('note', {
   createdAt: text('created_at'),
   deletedAt: text('deleted_at'),
   updatedAt: text('updated_at'),
+  lastVisitedAt: text('last_visited_at'),
   userId: text()
     .notNull()
     .references(() => user.id),

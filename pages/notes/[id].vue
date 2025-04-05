@@ -27,6 +27,16 @@ const notesObservable = useObservable(
   )
 ) as Ref<Note | undefined>
 
+onMounted(async () => {
+  try {
+    await db.notes.update(route.params.id as string, {
+      lastVisitedAt: new Date().toISOString(),
+    })
+  } catch (error) {
+    console.error(`Error updating last visited date`, error)
+  }
+})
+
 /**
  * Handles newly created pages that had no content
  * no sync needed, we can just get rid of the note

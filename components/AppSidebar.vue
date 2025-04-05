@@ -52,10 +52,16 @@
 </template>
 <script setup>
 import { signOut, useSession } from '~/lib/auth-client'
+import { liveQuery } from 'dexie'
+import { db } from '~/lib/dexie'
 const session = useSession()
 
 const { createNote } = useCreateNote()
 const { socialSignIn } = useLogin()
+
+const notes = useObservable(
+  liveQuery(() => db.notes.orderBy('createdAt').reverse().limit(20).toArray())
+)
 
 const login = () =>
   socialSignIn('google', {
@@ -63,33 +69,28 @@ const login = () =>
     errorCallbackURL: '/login/error',
     newUserCallbackURL: '/first-login',
   })
-const items = ref([
+
+const items = computed(() => [
   [
     {
       label: 'Links',
       type: 'label',
     },
-    {
-      label: 'Notes',
-      icon: 'i-lucide-file-text',
-      defaultOpen: true,
-      children: [
-        {
-          label: 'New note',
-          description: 'Add a new note',
-          onSelect: () => {
-            createNote()
+    ...(notes.value?.length
+      ? [
+          {
+            label: 'Notes',
+            icon: 'i-lucide-file-text',
+            defaultOpen: true,
+            children: notes.value?.map((note) => ({
+              label: note.title || 'Untitled note',
+              description: 'See your existing notes',
+              icon: 'i-lucide-file',
+              to: `/notes/${note.id}`,
+            })),
           },
-          icon: 'i-lucide-plus',
-        },
-        {
-          label: 'My notes',
-          description: 'See your existing notes',
-          icon: 'i-lucide-notebook',
-          to: '/notes',
-        },
-      ],
-    },
+        ]
+      : []),
   ],
 ])
 </script>
