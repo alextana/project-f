@@ -76,11 +76,18 @@ const items = computed(() => [
       label: 'Links',
       type: 'label',
     },
+    {
+      label: 'All notes',
+      to: '/notes',
+      icon: 'i-lucide-file-stack',
+      description: 'See all your notes',
+    },
     ...(notes.value?.length
       ? [
           {
-            label: 'Notes',
-            icon: 'i-lucide-file-text',
+            label: 'New Notes',
+            to: '/notes',
+            icon: 'i-lucide-clock',
             defaultOpen: true,
             children: notes.value?.map((note) => ({
               label: note.title || 'Untitled note',
