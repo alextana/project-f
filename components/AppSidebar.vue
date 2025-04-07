@@ -77,6 +77,11 @@ const items = computed(() => [
       type: 'label',
     },
     {
+      label: 'Home',
+      to: '/',
+      icon: 'i-lucide-home',
+    },
+    {
       label: 'All notes',
       to: '/notes',
       icon: 'i-lucide-file-stack',
