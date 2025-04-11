@@ -27,6 +27,7 @@
     "@tiptap/starter-kit": "^2.11.5",
     "@tiptap/vue-3": "^2.11.5",
     "@vitejs/plugin-vue-jsx": "^4.1.1",
+    "@vueuse/components": "^13.1.0",
     "@vueuse/nuxt": "^13.0.0",
     "@vueuse/rxjs": "^13.0.0",
     "better-auth": "^1.2.4",
