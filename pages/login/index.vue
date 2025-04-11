@@ -1,6 +1,4 @@
 <template>
-  Login please!
-
   <UButton @click="login()" label="Login with Google" />
 
   <pre>{{ session.data }}</pre>
@@ -14,7 +12,7 @@ const { socialSignIn } = useLogin()
 
 const login = () =>
   socialSignIn('google', {
-    callbackURL: '/notes?loggedIn=true',
+    callbackURL: '/login/success',
     errorCallbackURL: '/login/error',
     newUserCallbackURL: '/first-login',
   })
