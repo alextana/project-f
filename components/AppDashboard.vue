@@ -32,13 +32,6 @@
         </NuxtLink>
       </UCarousel>
     </div>
-
-    <div class="action-map">
-      <div class="brain-dump flex items-center gap-1">
-        <UIcon name="i-lucide-book" class="text-gray-400" />
-        <h3 class="text-md font-semibold">Brain dump</h3>
-      </div>
-    </div>
   </div>
 </template>
 
