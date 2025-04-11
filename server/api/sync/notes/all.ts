@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
   }
 
   /**
-   * Get all the notes from the server
+   * Get all the notes from the remote db
    * and all the notes from the local db
    */
   const serverNotes = await db.query.note.findMany({
@@ -33,7 +33,6 @@ export default defineEventHandler(async (event) => {
   })
 
   /**
-   *
    * @param note
    * @returns
    */
@@ -84,8 +83,30 @@ export default defineEventHandler(async (event) => {
     }
 
   /**
-   * if the hashes don't match
-   * we can update the db with the local data
+   * Hashes don't match, we have a couple of things we need to check
+   * who has the latest note, remote or local?
+   *
+   * I probably have to check each note, it's almost as if we need version control
+   * for each of them?
+   *
+   * to prevent data loss we'll need to check inside the body for differences, and merge accordingly
+   * realistically when doing a full sync that's not possible
+   *
+   * so we could take the approach of always taking the latest, no matter what
+   *
+   * flow is this
+   *
+   * you edit a note, it goes in a queue at a certain time
+   *
+   * network error!
+   *
+   * go on a different device, edit the same note - network ok -> synced to the server at later time
+   *
+   * go online with other device, queue clears - IF we have something in the queue that's OLDER than
+   * something in the server, we can look into doing a merge
+   *
+   * parsing the content and looking for differences, injecting the changes and doing a diff?
+   *
+   *
    */
-  // do something here - sync strategy
 })
